@@ -21,13 +21,13 @@
 		$("#search-res").show();
 		$("#search-res").html("<img src='load.gif' width=50/>");
 		var file1 = $("#file1").val().split("\\");
-		var file2 = $("#file2").val().split("\\");
+		//var file2 = $("#file2").val().split("\\");
 		$.ajax({
 			type: "POST",
 			url: "/search",
 			data:{
 				query:file1[file1.length-1],
-				query2:file2[file2.length-1]
+				//query2:file2[file2.length-1]
 			},
 			success: function(data){
 				$("#search-res").html(data);
