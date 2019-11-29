@@ -61,11 +61,18 @@ int isSubstring(string s1, string s2)
 string removeSpecialCharacter(string s) 
 { 
     for (int i = 0; i < s.size(); i++) { 
-         if (s[i] >= ' ' && s[i] <= '?' || s[i]=='HT')  
+         if (s[i] >= '!' && s[i] <= '?')  
         {
-            s.erase(i, 1);  
+            s.erase(i,1);
             i--; 
-        } 
+        }else if (s[i]=='HT'){
+            s.erase(i,1);
+            i--; 
+        }else if (s[i]==168){
+            s.erase(i,1);
+            i--; 
+        }
+
     } 
     return s; 
 } 
