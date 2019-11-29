@@ -19,5 +19,5 @@ Solicitud.o: Solicitud.cpp Solicitud.h
 		g++ Solicitud.cpp -c
 clean:
 	rm -rf *.o 
-	rm -rf mainServer
 	rm -rf mainClient
+	rm -rf mainServer
