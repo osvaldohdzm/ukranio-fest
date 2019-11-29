@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta charset="UTF-8">
+    <title>Ukranio Libro</title>
+</head>
+
+<body>
+<div id="app">
+        <v-app>
+            <v-container fluid>
+                <v-row>
+                    <v-col
+                            :cols=12
+                    >
+                        <v-card>
+                            <v-card-title class="display-4 font-italic font-weight-light">
+                                Ukranio Fest
+                            </v-card-title>
+                            <v-card-actions>
+                                <v-file-input
+                                        chips
+                                        :clearable=true
+                                        label="File input"
+                                        accept=".txt"
+                                        v-model="chosenFile"
+                                >
+                                </v-file-input>
+                                <v-btn
+
+                                        v-show="!hidden"
+                                        color="primary"
+                                        fab
+                                        dark
+                                        small
+                                        absolute
+                                        bottom
+                                        right
+                                        :loading=loading
+                                        @click="send"
+                                >
+                                    <v-icon>mdi-send</v-icon>
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-app>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+    const vuetify = new Vuetify({
+        theme: {
+            dark: true,
+        },
+    });
+
+    new Vue({
+        el: '#app',
+        vuetify: vuetify,
+        theme: {
+            dark: true,
+        },
+        data() {
+            return {
+                selection:{},
+                loading:false,
+                hidden:false,
+                chosenFile: null,
+
+            }
+        },
+        watch:{
+            selection (){
+                this.send()
+            }
+        },
+        methods:{
+            send(){
+                this.loading=true;
+                console.log(this.chosenFile);
+                let URL= "/upload";
+                let formData = new FormData();
+                formData.append('file', this.chosenFile);
+                axios.post(URL,
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
+                ).then(response=>{
+                    console.log(response);
+                }).catch(error=>{
+                        console.log(error);
+                }).finally(()=>this.loading=false)
+            }
+        }
+    })
+</script>
+</body>
+</html>
