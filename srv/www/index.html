@@ -1,0 +1,68 @@
+<html>
+	<head>
+		<title>Ukranio Fest</title>
+		<script src="jquery.min.js"></script>
+	</head>
+	<body style="font-family:arial;">
+		<div style="text-align:center">
+			<form method=get id="form-search" class="block">
+				<h2>Selecciona los archivos</h2>
+				<input type="file" id="file1" name="file1"><br><br>
+				<button>Enviar Archivo</button>
+			</form>
+			<div class="block" id="search-res"></div>
+		</div>
+	</body>
+</html>
+
+<script>
+	$("#search-res").hide();
+	$('#form-search').submit(function(){
+		$("#search-res").show();
+		$("#search-res").html("<img src='load.gif' width=50/>");
+		var file1 = $("#file1").val().split("\\");
+		//var file2 = $("#file2").val().split("\\");
+		$.ajax({
+			type: "POST",
+			url: "/search",
+			data:{
+				query:file1[file1.length-1],
+				//query2:file2[file2.length-1]
+			},
+			success: function(data){
+				$("#search-res").html(data);
+			}
+		});
+		alert("Archivo enviado");
+		return false;
+	});
+</script>
+
+<style>
+	h1{
+		color:#009D9D;
+	}
+	body{
+		background-color:#004242;
+	}
+	.block{
+		background-color:#006D6D;
+		padding:20px;
+		margin-left:25%;
+		margin-right:25%;
+		border-radius:10px;
+	}
+	button{
+		background-color:#005959;
+		border:0;
+		padding:10px;
+		border-radius:10px;
+		color:#009D9D;
+	}
+	#search{
+		height:40px;
+		font-size:20px;
+		width:300px;
+		border-radius:10px;
+	}
+</style>
