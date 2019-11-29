@@ -90,7 +90,7 @@ int main(void) {
   // Set up HTTP server parameters
   mg_set_protocol_http_websocket(c);
 
-  printf("Servidor web iniciado en http://localhost:%s\n", s_http_port);
+  printf("Servidor web iniciado Puerto :%s\n", s_http_port);
   for (;;) {
     mg_mgr_poll(&mgr, 1000);
   }
