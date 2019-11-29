@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Comparador de frase mas larga">
+  <meta name="author" content="Equipo 23">
+  <title>Ukranio Fest on the Web</title>
+  <!-- Favicon -->
+  <link href="assets/img/brand/favicon.png" rel="icon" type="image/png">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+  <!-- Icons -->
+  <link href="assets/vendor/nucleo/css/nucleo.css" rel="stylesheet">
+  <!-- Argon CSS -->
+  <link type="text/css" href="assets/css/argon.css?v=1.0.0" rel="stylesheet">
+</head>
+
+<body class="bg-default">
+  <div class="main-content">
+    <!-- Navbar -->
+    <nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark">
+      <div class="container px-4">
+        <!--<a class="navbar-brand" href="index.html" style="font-size:25px;font-weight: 700;">
+
+          UkranioFest
+        </a>-->
+        <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-main" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>-->
+        <div class="collapse navbar-collapse" id="navbar-collapse-main">
+          <!-- Collapse header -->
+          <div class="navbar-collapse-header d-md-none">
+            <div class="row">
+              <div class="col-6 collapse-brand">
+
+              </div>
+              <div class="col-6 collapse-close">
+                <!--<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle sidenav">
+                  <span></span>
+                  <span></span>
+                </button>-->
+              </div>
+            </div>
+          </div>
+          <!-- Navbar items -->
+          <ul class="navbar-nav ml-auto">
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Header -->
+    <div class="header bg-gradient-primary py-7 py-lg-8">
+      <div class="container">
+        <div class="header-body text-center mb-1">
+          <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-6">
+              <h1 class="text-white">Equipo 23</h1>
+              <p class="text-lead text-light">Proyecto Final - Sistemas distribuidos<br>Comprensión de Lectura</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="separator separator-bottom separator-skew zindex-100">
+        <!--<svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+        </svg>-->
+      </div>
+    </div>
+    <!-- Page content -->
+    <div class="container mt--8 pb-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+          <div class="card bg-secondary shadow border-0">
+            <div class="card-header bg-transparent pb-5">
+              <div class="text-muted text-center mt-2 mb-3"><small>Ingrese el archivo a checar</small></div>
+              <form role="form" id="form-files">
+                <div class="form-group">
+                  <label for="exampleFormControlFile1">Archivo 1</label>
+                  <input type="file" class="form-control-file" id="File1" name="File1">
+                </div>
+                <!--<div class="form-group">
+                  <label for="exampleFormControlFile1">Archivo 2</label>
+                  <input type="file" class="form-control-file" id="File2" name="File2">
+                  <textarea class="form-control" id="File2Area" name="File2Area" rows="3"></textarea>
+                </div> -->
+                <div class="text-center">
+                  <button type="button" id="FileSubmit" class="btn btn-primary my-4">Calcular Comprensión</button>
+                </div>
+              </form>
+
+              <div id="response"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argon Scripts -->
+  <!-- Core -->
+  <script src="assets/vendor/jquery/dist/jquery.min.js"></script>
+  <script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Argon JS -->
+  <script src="assets/js/argon.js?v=1.0.0"></script>
+  <script>
+    function readSingleFile(e, i) {
+      var file = e.target.files[0];
+      if (!file) {
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var contents = e.target.result;
+        displayContents(contents, i);
+      };
+      reader.readAsText(file);
+    }
+
+    function displayContents(contents, i) {
+      var element = document.getElementById('File'+i+'Area');
+      element.innerText = contents;
+    }
+
+    document.getElementById('File1')
+      .addEventListener('change', (e) => readSingleFile(e,1), false);
+
+    document.getElementById('File2')
+      .addEventListener('change', (e) => readSingleFile(e,2), false);
+
+    document.getElementById('FileSubmit').addEventListener('click', () => {
+        //alert("ye");
+        var timeStart = Date.now();
+        var timeEnd = 0;
+        var timeTotal = 0;
+        formdata = document.getElementById('File1Area').value;
+        formdata2 = document.getElementById('File2Area').value;
+        //console.log(formdata);
+        //console.log(formdata2)
+        document.getElementById('response').innerHTML = "<img style='width:100%' src='https://thumbs.gfycat.com/RegalSleepyAcouchi-size_restricted.gif'/>";
+        document.getElementById('FileSubmit').innerText = "Cargando....";
+        document.getElementById('FileSubmit').disabled = true;
+        jQuery.ajax({
+            url: "/sendfile",
+            type: "POST",
+            data: {file1: formdata, file2:formdata2},
+            success: function (result) {
+                timeEnd = Date.now();
+                timeTotal = timeEnd - timeStart;
+                console.log("Tiempo total: "+timeTotal+" ms");
+                console.log(result)
+                document.getElementById('response').innerHTML = "Tiempo Total: "+timeTotal+" ms <br>Coincidencia más larga: "+result+"<br>Caracteres: "+result.length;
+                document.getElementById('FileSubmit').innerText = "Comparar archivos";
+                document.getElementById('FileSubmit').disabled = false;
+            }
+        });
+    });
+  </script>
+</body>
+</html>
