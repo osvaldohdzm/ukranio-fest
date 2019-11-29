@@ -1,6 +1,5 @@
-Servidor: Servidor.cpp SocketDatagrama.o PaqueteDatagrama.o  Archivo.o
+run: Servidor.cpp SocketDatagrama.o PaqueteDatagrama.o  Archivo.o
 	g++ -std=c++11 Servidor.cpp SocketDatagrama.o PaqueteDatagrama.o Mensaje.h mongoose.cpp Archivo.o Mensaje.o -o servidor
-Servidor-esclavo: Servidor-esclavo.cpp SocketDatagrama.o PaqueteDatagrama.o  Archivo.o
 	g++ -std=c++11 Servidor-esclavo.cpp SocketDatagrama.o PaqueteDatagrama.o Mensaje.h mongoose.cpp Archivo.o Mensaje.o -o servidor-esclavo
 SocketDatagrama.o: SocketDatagrama.cpp PaqueteDatagrama.o SocketDatagrama.h
 	g++  -std=c++11 SocketDatagrama.cpp -c
