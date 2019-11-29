@@ -6,26 +6,66 @@
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <meta charset="UTF-8">
-    <title>Ukranio Libro</title>
+    <title>Ukranio Fest</title>
 </head>
+<style>
+	.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
 
-<body>
+.button1 {
+  background-color: #3b3f3e ; 
+  color: white; 
+  border: 2px solid #4CAF50;
+}
+
+.button1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
+</style>
+<body style="font-family:arial; text-align:center">
 <div id="app">
         <v-app>
-            <v-container fluid>
-                <v-row>
+        <div style="position:absolute; top:50px; left:200px">
+            <v-container fluid >
+            	<v-row justify="center" > 
+                	<v-card width=300px >
+            				<v-img src="/escom.jpg"
+                    			   height="90px"
+                    			   weight="100px">
+                    		</v-img>
+            		</v-card>	
+                </v-row>
+                <v-row justify="center">
+                
                     <v-col
                             :cols=12
                     >
-                        <v-card>
-                            <v-card-title class="display-4 font-italic font-weight-light">
-                                Ukranio Fest
-                            </v-card-title>
-                            <v-card-actions>
+                        <v-card width=600px style="background-color: rgb(22, 160, 133)">
+                       
+                            
+                                <h1>Equipo 23</h1>
+                           <form method=get id="form-search" class="block">
+								<h2>Selecciona los archivos</h2>
+							</form>
+                            <v-card-actions >
                                 <v-file-input
                                         chips
                                         :clearable=true
-                                        label="File input"
+                                        label="Ningun archivo seleccionado"
                                         accept=".txt"
                                         v-model="chosenFile"
                                 >
@@ -33,7 +73,7 @@
                                 <v-btn
 
                                         v-show="!hidden"
-                                        color="primary"
+                                        color="medium sea green"
                                         fab
                                         dark
                                         small
@@ -43,14 +83,20 @@
                                         :loading=loading
                                         @click="send"
                                 >
-                                    <v-icon>mdi-send</v-icon>
+                                   Enviar archivo
                                 </v-btn>
                             </v-card-actions>
+                                   
                         </v-card>
                     </v-col>
+                     <button class="button button1">Resultados</button>
                 </v-row>
+                
             </v-container>
+            </div>
         </v-app>
+
+ 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
