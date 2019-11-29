@@ -1,0 +1,247 @@
+*****************************************************
+******************************************************
+********************RECEPTOR***************************
+
+
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <strings.h>
+#include <arpa/inet.h>
+#include <errno.h>
+
+char IPcarga[] = "127.0.0.1";
+int puertoCarga = 7200;
+char IPreceptor[] = "127.0.0.1";
+int puertoReceptor = 7201;
+
+
+
+void* threadFunction(void* args)
+{
+   int  j = *(int *) args;
+   struct sockaddr_in other_peer, server_info;
+   
+   int s, res;
+
+   if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))== -1)
+   {
+      printf("die socket\n");
+   }
+   /* rellena la dirección del servidor */
+   //bzero((char *)&other_peer, sizeof(other_peer));
+
+   other_peer.sin_family = AF_INET;
+   other_peer.sin_port = htons(puertoCarga);
+   if (inet_aton(IPcarga,&other_peer.sin_addr) == 0)
+   {
+        fprintf(stderr, "inet_aton() failed\n");
+   }
+   if (sendto(s, &j, sizeof(int), 0, (struct sockaddr *) &other_peer, sizeof(other_peer)) == -1)
+   {
+     printf("Error: %s (%d)\n", strerror(errno), errno);
+   }
+
+
+
+}
+
+
+
+int main(void)
+{
+   int num=-1;
+   int s, res, clilen;
+   int contadorPackRecibido = 1;
+   int contadorPacksRecibidos = 0; 
+   struct sockaddr_in server_addr, msg_to_client_addr;
+   if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))== -1)
+   {
+      printf("die socket\n");
+   }
+
+   /* se asigna una direccion al socket del servidor*/
+   //bzero((char *)&server_addr, sizeof(server_addr));
+
+   server_addr.sin_family = AF_INET;
+   server_addr.sin_port = htons(puertoReceptor);
+   server_addr.sin_addr.s_addr = inet_addr(IPreceptor);
+   
+
+   int resBind = bind(s, (struct sockaddr *)&server_addr, sizeof(server_addr));
+   printf("IP: %s\n",inet_ntoa(server_addr.sin_addr));
+   printf("Puerto %d\n",ntohs(server_addr.sin_port));   
+   clilen = sizeof(msg_to_client_addr);
+
+   int numAnterior;
+
+   /*Datos para crear hilo*/
+    pthread_t id;
+    int ret;
+
+   while(num !=0) {
+      recvfrom(s, &num, sizeof(int), 0, (struct sockaddr *)&msg_to_client_addr, &clilen);
+      contadorPacksRecibidos++;
+      if (contadorPackRecibido != num & num!=0)
+      {
+         while (contadorPackRecibido != num & num!=0)
+         {
+             ret = pthread_create(&id,NULL,&threadFunction,&contadorPackRecibido);
+             if(ret==0)
+                 printf("Thread created successfully.\n");
+             pthread_join(id,NULL);
+            contadorPackRecibido++;
+         }
+      }
+      printf("%d\n", num);
+      if (num != 0)
+      {
+         numAnterior = num;
+      }
+      contadorPackRecibido++;
+      //printf("Puerto %d\n",ntohs(msg_to_client_addr.sin_port));
+   }
+   res = (((contadorPacksRecibidos/numAnterior)*100));
+   
+   sendto(s, &res, sizeof(int), 0, (struct sockaddr *)&msg_to_client_addr, clilen);
+   close(s);
+}
+
+
+
+
+
+*************************************************************************************
+************************************************************************************
+**********************************EMISOR********************************************
+
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <string.h>
+#include <errno.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <pthread.h>
+
+char IPcarga[] = "127.0.0.1";
+int puertoCarga = 7200;
+char IPreceptor[] = "127.0.0.1";
+int puertoReceptor = 7201;
+
+
+
+
+/*thread function definition*/
+void* threadFunction(void* args)
+{
+	printf("El hilo funciona para recibir\n");
+	int s, res = 0;
+	struct sockaddr_in server_info, sockHilo;
+
+   	if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))== -1)
+   	{
+		printf("die socket\n");
+   	}
+   	server_info.sin_family = AF_INET;
+   	server_info.sin_addr.s_addr = inet_addr(IPcarga);
+   	server_info.sin_port = htons(puertoCarga);
+   	bind(s, (struct sockaddr *)&server_info,sizeof(server_info));
+   	printf("IP servidor: %s\n",inet_ntoa(server_info.sin_addr));
+   	printf("Puerto servidor %d\n",ntohs(server_info.sin_port));
+
+   	while (1) {
+   		recvfrom(s, &res, sizeof(int), 0, (struct sockaddr *) &sockHilo, sizeof(sockHilo));
+   		if (res == 0)
+   		{
+   			
+   		} else {
+   			printf("Paquete perdido %d\n", res);
+   		}
+   		
+   	}
+}
+
+void* threadFunction2(void* args) {
+
+	struct sockaddr_in other_peer, server_info;
+   	int n = *(int *) args;
+   
+   int s, num[n], res;
+
+   if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))== -1)
+   {
+      printf("die socket\n");
+   }
+   /* rellena la dirección del servidor */
+   //bzero((char *)&other_peer, sizeof(other_peer));
+
+   other_peer.sin_family = AF_INET;
+   other_peer.sin_port = htons(puertoReceptor);
+   if (inet_aton(IPreceptor,&other_peer.sin_addr) == 0)
+   {
+        fprintf(stderr, "inet_aton() failed\n");
+   }
+   //server_addr.sin_addr.s_addr = inet_addr(IPreceptor);
+   
+
+   printf("IP a enviar: %s\n",inet_ntoa(other_peer.sin_addr));
+   printf("Puerto a enviar %d\n",ntohs(other_peer.sin_port));
+
+
+	/*creating thread*/
+
+    /*Finish thread */
+   for(int i = 1; i <= n; i++)
+   {
+      int  j [1];
+      j[0] = i;
+      if (sendto(s, j, sizeof(int), 0, (struct sockaddr *) &other_peer, sizeof(other_peer)) == -1)
+      {
+         printf("Error: %s (%d)\n", strerror(errno), errno);
+      }
+      printf("%d\n", i);
+
+
+   }
+   int  j [1];
+   j[0] = 0;
+    if (sendto(s, j, sizeof(int), 0, (struct sockaddr *) &other_peer, sizeof(other_peer)) == -1)
+    {
+        printf("Error: %s (%d)\n", strerror(errno), errno);
+    }
+
+
+   /* se bloquea esperando respuesta */
+   recvfrom(s, &res, sizeof(int), 0, (struct sockaddr *) &server_info, sizeof(server_info));
+   printf("Porcentaje recibido %d", res);
+   close(s);
+}
+
+
+/*Ejecutar programa con 1 parámetro
+Param1 n
+*/
+int main(int argc,char** argv)
+{
+	int n = atoi(argv[1]);
+	pthread_t id2;
+	int ret2;
+	ret2=pthread_create(&id2,NULL,&threadFunction2,&n);
+	pthread_join(id2,NULL);
+
+	pthread_t id;
+	int ret;
+	ret=pthread_create(&id,NULL,&threadFunction,NULL);
+	pthread_join(id,NULL);
+
+
+
+
+}

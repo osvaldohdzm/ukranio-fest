@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Mongoose REST</title>
+		<script src="jquery.min.js"></script>
+	</head>
+	<body style="font-family:arial;">
+		<div style="text-align:center">
+			<h1>Proyecto Final</h1>
+				<h2>Introduzca cadena</h2>
+				<input type="file" id="search"/>
+				<input type="file" id="search2"/>
+			<div class="block" id="search-res"></div>
+		</div>
+
+		<form role="form" method="POST" action="/search">
+			<div class="form-group">
+				<label for="exampleFormControlTextarea1">Texto 1</label>
+				<textarea class="form-control" id="result" rows="3"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="exampleFormControlTextarea1">Texto 2</label>
+				<textarea class="form-control" id="result1" rows="3"></textarea>
+			</div>
+
+			<div class="text-center">
+				<input type="submit"/>
+			</div>
+		</form>
+	</body>
+</html>
+
+<script>
+$(document).ready(function(){
+	$('#search').change(function(){
+	    //on change event
+	    formdata = new FormData();
+	    if($(this).prop('files').length > 0)
+	    {
+	        file =$(this).prop('files')[0];
+	        formdata.append('Content',file);
+					for (var variable of formdata.values()) {
+						console.log();
+						$("#result").load(variable.name);
+					}
+	    }
+	});
+
+	$('#search2').change(function(){
+	    //on change event
+	    formdata2 = new FormData();
+	    if($(this).prop('files').length > 0)
+	    {
+				file =$(this).prop('files')[0];
+				formdata.append('Content',file);
+				for (var variable of formdata.values()) {
+					console.log();
+					$("#result1").load(variable.name);
+				}
+	    }
+	});
+
+	$('#form-search').submit(function(){
+	jQuery.ajax({
+	    url: "/search",
+	    type: "POST",
+	    data: formdata,//{formdata, formdata2},
+	    processData: false,
+	    contentType: false,
+	    success: function (result) {
+	         // if all is well
+	         // play the audio file
+	    }
+	});
+});
+
+/*
+	$("#search-res").hide();
+	$('#form-search').submit(function(){
+		$("#search-res").show();
+		$("#search-res").html("<img src='load.gif' width=50/>");
+		$.ajax({
+			type: "POST",
+			url: "/search",
+			data:{
+				query:$("#search").val()
+				query:$("#search2").val()
+			},
+			success: function(data){
+				$("#search-res").html(data);
+			}
+		});
+		return false;
+	});*/
+
+
+});
+</script>
+
+<style>
+	h1{
+		color:#009D9D;
+	}
+	body{
+		background-color:#004242;
+	}
+	.block{
+		background-color:#006D6D;
+		padding:20px;
+		margin-left:25%;
+		margin-right:25%;
+		border-radius:10px;
+	}
+	button{
+		background-color:#005959;
+		border:0;
+		padding:10px;
+		border-radius:10px;
+		color:#009D9D;
+	}
+	#search{
+		height:40px;
+		font-size:20px;
+		width:300px;
+		border-radius:10px;
+	}
+</style>
