@@ -61,8 +61,7 @@ int isSubstring(string s1, string s2)
 string removeSpecialCharacter(string s) 
 { 
     for (int i = 0; i < s.size(); i++) { 
-         if (s[i] < 'A' || s[i] > 'Z' && 
-            s[i] < 'a' || s[i] > 'z' && s[i] < 162 || s[i] > 165 && s[i] < 130 || s[i] > 130)  
+         if (s[i] >= ' ' && s[i] <= '?' || s[i]=='HT')  
         {
             s.erase(i, 1);  
             i--; 
@@ -78,11 +77,10 @@ int compare(Node *p, string word, int start)
             start=compare(p->right,word, start);
         }
         ofstream output;
-    output.open("nuevo.txt", ios::out | ios::app );
-    output.write(p->data.c_str(), p->data.length());
-    output.write("\n",1);
-    output.flush();
-    output.close();/*
+        output.open("registros.txt", ios::out | ios::app );
+        output.write(p->data.c_str(), p->data.length());
+        output.write("\n",1);
+        output.flush();/*
         if(isSubstring(word,p->data)!=-1){
         	cout<<"encontre una palabra"<<endl;
         	start++;
@@ -106,9 +104,6 @@ int main(int argc, char *argv[])
 	}
 	int cont = 0;
 	Node* rootPtr = NULL;
-	//string s = "rm registro.txt &&./generador "+to_string(n)+" registro.txt";
-	//cout<<s<<endl;
-	//system(s.c_str());
 	string line;
 	string line2;
 	std::ifstream infile("formas.txt");
