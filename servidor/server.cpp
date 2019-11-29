@@ -25,7 +25,6 @@
 #define sendrecvflag 0 
 #define nofile "File Not Found!"
 using namespace std;
-char *argu;
 char buffer[BUF_SIZE];
 
 static const char *s_http_port = "8889";
@@ -68,7 +67,6 @@ int main(int arg,char *argv[]) {
 	struct mg_mgr mgr;
 	struct mg_connection *nc;
 	mg_mgr_init(&mgr, NULL);
-	argu=argv[1];
 	printf("Iniciando servidor en puerto: %s\n", s_http_port);
 		nc = mg_bind(&mgr, s_http_port, ev_handler);
 	if (nc == NULL) {
@@ -89,6 +87,7 @@ int main(int arg,char *argv[]) {
 void enviaArchivos(char* ipServidor,char* archivoF){
 	char *ip = (char *)malloc( LEN_IP*sizeof(char) );
 	char *nameFile = (char *)malloc( MAX_PATH*sizeof(char) );
+	cout<<archivoF<<endl;
 	strcpy( ip , ipServidor );
 	strcpy( nameFile, archivoF );
 	Mensaje *mensajeEntrada;
@@ -100,8 +99,14 @@ void enviaArchivos(char* ipServidor,char* archivoF){
     PaqueteDatagrama paqueteEnviar( sizeof(Mensaje) );
     paqueteEnviar.setIp( ip );
     paqueteEnviar.setPuerto( PORT_SERV );
-	archivo.openFile( nameFile, READ );
-        do{
+	archivo.openFile( nameFile, 3 );
+        do{/*
+        	cout<<"entre"<<endl;
+        	ofstream output;
+        	output.open(namefile, ios::out | ios::app );
+        	output.write()
+*/
+
             if(position > 0)
                 mensajeSalida.setOpcode( WRITE );
             else

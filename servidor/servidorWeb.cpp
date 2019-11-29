@@ -84,7 +84,7 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
 
-  s_http_server_opts.document_root = "www";  // Serve current directory
+  s_http_server_opts.document_root = "Vista/";  // Serve current directory
   mg_register_http_endpoint(c, "/upload", handle_upload MG_UD_ARG(NULL));
 
   // Set up HTTP server parameters

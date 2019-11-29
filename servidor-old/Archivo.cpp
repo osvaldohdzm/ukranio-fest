@@ -17,10 +17,8 @@ int Archivo::openFile( char* nombre, int op_code ){
     printf("Open %s\n",nombre);
     if(op_code == 2)
         fileDescriptor = open(nombre, O_RDONLY);
-    else{
+    else
         fileDescriptor = open(nombre, O_WRONLY|O_TRUNC|O_CREAT,0666);
-    }
-
 
     if(fileDescriptor == -1)
         r = -3;
