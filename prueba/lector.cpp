@@ -83,11 +83,16 @@ int compare(Node *p, string word, int start)
         {
             start=compare(p->right,word, start);
         }
+        if(p->data=="él"){
+        	int cont=1;
+        	return cont;
+        }
+        /*
         ofstream output;
         output.open("registros.txt", ios::out | ios::app );
         output.write(p->data.c_str(), p->data.length());
         output.write("\n",1);
-        output.flush();/*
+        output.flush();
         if(isSubstring(word,p->data)!=-1){
         	cout<<"encontre una palabra"<<endl;
         	start++;
@@ -131,7 +136,7 @@ int main(int argc, char *argv[])
 		//}
 	}
 	
-	compare(rootPtr,line,cont);
+	cout<<compare(rootPtr,line,cont)<<endl;
 
     /*
 	while (getline(infile2, line2))
