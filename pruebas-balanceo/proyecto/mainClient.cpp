@@ -19,7 +19,7 @@ void hilo1(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("10.100.66.206",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
 	check_malas[0] = malas;
 	a.getSocket()->~SocketDatagrama();
 	//pthread_exit(0);
@@ -31,7 +31,7 @@ void hilo2(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("10.100.77.14",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
 	check_malas[1] = malas;
 	a.getSocket()->~SocketDatagrama();
 	//pthread_exit(0);
@@ -44,6 +44,8 @@ void hilo3(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
+	
+	//memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
 	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
 	check_malas[2] = malas;
 	a.getSocket()->~SocketDatagrama();
@@ -64,7 +66,9 @@ int main(int argc, char *argv[])
 	vector<string> palabras;
 	vector<thread> hilos;
 	int indice = 0;
-	string words[] = {"hola", "casa", "parangrti"};
+string words[] = {"abandona", "abandonada", "anticonstitucionalmente"};
+
+	//string words[] = {"hola", "casa", "parangrti"};
 	for(string s : words){
 		palabras.push_back(s);
 		if(indice == 0)
@@ -93,7 +97,7 @@ int main(int argc, char *argv[])
 		indice++;
 		indice%=3;
 	}
-	cout << "NO comprendidas: " << no_comprendidas << endl;
+	cout << "Comprendidas: " << no_comprendidas << endl;
 
 	// string s;
 	// while(cin >> s){
