@@ -1,6 +1,15 @@
-run: servidorWeb.cpp
-	g++ -DMG_ENABLE_HTTP_STREAMING_MULTIPART servidorWeb.cpp mongoose.c -w -o servidorWeb
-servidor-esclavo: servidor-esclavo.cpp
-	g++ servidor-esclavo.cpp -c
+Servidor: Servidor.cpp SocketDatagrama.o PaqueteDatagrama.o  Archivo.o
+	g++ -std=c++11 Servidor.cpp SocketDatagrama.o PaqueteDatagrama.o Mensaje.h mongoose.cpp Archivo.o Mensaje.o -o servidor
+Servidor-esclavo: Servidor-esclavo.cpp SocketDatagrama.o PaqueteDatagrama.o  Archivo.o
+	g++ -std=c++11 Servidor-esclavo.cpp SocketDatagrama.o PaqueteDatagrama.o Mensaje.h mongoose.cpp Archivo.o Mensaje.o -o servidor-esclavo
+SocketDatagrama.o: SocketDatagrama.cpp PaqueteDatagrama.o SocketDatagrama.h
+	g++  -std=c++11 SocketDatagrama.cpp -c
+PaqueteDatagrama.o: PaqueteDatagrama.cpp PaqueteDatagrama.h Mensaje.o
+	g++ -std=c++11 PaqueteDatagrama.cpp -c
+Archivo.o: Archivo.cpp Archivo.h Header.h
+	g++ -std=c++11 Archivo.cpp -c
+Mensaje.o: Mensaje.cpp Mensaje.h
+	g++ -std=c++11 Mensaje.cpp -c
 clean:
-	rm -r *.o
+	rm -rf *.o 
+	rm -rf servidor

@@ -1,3 +1,4 @@
+#define MG_ENABLE_HTTP_STREAMING_MULTIPART 1
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -84,13 +85,13 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
 
-  s_http_server_opts.document_root = "Vista/";  // Serve current directory
+  s_http_server_opts.document_root = "www/";  // Serve current directory
   mg_register_http_endpoint(c, "/upload", handle_upload MG_UD_ARG(NULL));
 
   // Set up HTTP server parameters
   mg_set_protocol_http_websocket(c);
 
-  printf("Servidor web iniciado Puerto :%s\n", s_http_port);
+  printf("Servidor web iniciado en http://localhost:%s\n", s_http_port);
   for (;;) {
     mg_mgr_poll(&mgr, 1000);
   }
