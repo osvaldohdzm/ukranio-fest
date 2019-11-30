@@ -2,7 +2,7 @@
 
 #include "Solicitud.h"
 #include "Registro.h"
-#include "Mongoose.h"
+#include "mongoose.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -27,7 +27,7 @@
 
 using namespace std;
 
-static const char *s_http_port = "8000";
+/*static const char *s_http_port = "8000";
 static struct mg_serve_http_opts s_http_server_opts;
 
 struct file_writer_data {
@@ -95,7 +95,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
   }
 }
 
-
+*/
 
 
 
@@ -182,7 +182,7 @@ void hilo1(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("172.20.10.2",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
 	//cout << "regresa 1 " << malas << endl;
 	check_malas[0] = malas;
 	//cout << "regresa 1 " << check_malas[0] << endl;
@@ -196,7 +196,7 @@ void hilo2(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("172.20.10.11",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
 	
 	check_malas[1] = malas;
 	//cout << "regresa 2 " << check_malas[1] << endl;
@@ -211,7 +211,7 @@ void hilo3(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("172.20.10.13",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
 	
 	check_malas[2] = malas;
 	//cout << "regresa 3 " << check_malas[2] << endl;
@@ -221,12 +221,35 @@ void hilo3(string cad){
 
 
 int main(int argc, char *argv[]){
+
+  /*struct mg_mgr mgr;
+  struct mg_connection *c;
+
+  mg_mgr_init(&mgr, NULL);
+  c = mg_bind(&mgr, s_http_port, ev_handler);
+  if (c == NULL) {
+    fprintf(stderr, "Cannot start server on port %s\n", s_http_port);
+    exit(EXIT_FAILURE);
+  }
+
+  s_http_server_opts.document_root = "www/";  // Serve current directory
+  mg_register_http_endpoint(c, "/upload", handle_upload MG_UD_ARG(NULL));
+
+  // Set up HTTP server parameters
+  mg_set_protocol_http_websocket(c);
+
+  printf("Servidor web iniciado en http://localhost:%s\n", s_http_port);
+  for (;;) {
+    mg_mgr_poll(&mgr, 1000);
+  }
+  mg_mgr_free(&mgr);
+*/
 	std::ifstream ifs;
     // std::vector<std::string> vec;
     std::string word;
     timeval actual{}, final{};
     vector<string> archivo;
-    ifs.open("Dostoievski, Fiódor (1880). Los hermanos Karamazov [14926].txt");
+    ifs.open("prueba-corta.txt");
     int cont =0;
     while (ifs >> word) {
         // filtrar puntuacines y numeros

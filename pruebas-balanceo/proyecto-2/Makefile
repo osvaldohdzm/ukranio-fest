@@ -4,7 +4,7 @@ Servidor: SocketDatagrama.o PaqueteDatagrama.o Respuesta.o mainServer.cpp Regist
 		g++ -std=c++11 mainServer.cpp SocketDatagrama.o PaqueteDatagrama.o Respuesta.o -o mainServer
 
 Cliente: SocketDatagrama.o PaqueteDatagrama.o Respuesta.o Solicitud.o mainClient.cpp Registro.h
-		g++ -std=c++11 mainClient.cpp SocketDatagrama.o PaqueteDatagrama.o Solicitud.o Respuesta.o -o mainClient -lpthread
+		g++ -DMG_ENABLE_HTTP_STREAMING_MULTIPART -std=c++11 mainClient.cpp mongoose.c SocketDatagrama.o PaqueteDatagrama.o Solicitud.o Respuesta.o -w -o mainClient -lpthread
 
 SocketDatagrama.o: SocketDatagrama.cpp SocketDatagrama.h
 		g++ SocketDatagrama.cpp -c
