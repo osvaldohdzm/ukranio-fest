@@ -50,7 +50,7 @@ int main(int argc, char* argv[]){
         memset(datos, 0, TAM_DATOS);
         memcpy(datos, m.arguments, sizeof(char) * TAM_DATOS);
 
-        //printf("datos: %s\n", datos);
+        printf("Palabra: %s\n", datos);
 
         bool found = std::binary_search(vec.begin(), vec.end(), datos);
 

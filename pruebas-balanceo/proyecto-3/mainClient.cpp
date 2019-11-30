@@ -181,7 +181,7 @@ void hilo1(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("192.168.43.183",7200,3,(char*)&texto,1),sizeof(int));
 	//cout << "regresa 1 " << malas << endl;
 	check_malas[0] = malas;
 	//cout << "regresa 1 " << check_malas[0] << endl;
@@ -195,7 +195,7 @@ void hilo2(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("192.168.43.15",7200,3,(char*)&texto,1),sizeof(int));
 	
 	check_malas[1] = malas;
 	//cout << "regresa 2 " << check_malas[1] << endl;
@@ -220,7 +220,7 @@ void hilo3(string cad){
 
 
 int main(int argc, char *argv[]){
-
+/*
   struct mg_mgr mgr;
   struct mg_connection *c;
 
@@ -242,7 +242,7 @@ int main(int argc, char *argv[]){
     mg_mgr_poll(&mgr, 1000);
   }
   mg_mgr_free(&mgr);
-
+*/
 	std::ifstream ifs;
     // std::vector<std::string> vec;
     std::string word;

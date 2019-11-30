@@ -32,7 +32,7 @@ char* Solicitud::doOperation(char * ip,int puerto, int operationid, char* argume
 
     do {
         socketLocal -> envia(paqueteDatagrama_Envio);
-        n = socketLocal->recibeTimeout(paqueteDatagrama_Recepcion,2,500000);
+        n = socketLocal->recibeTimeout(paqueteDatagrama_Recepcion,1,1);
         if (n != -1)
             break;
         veces--;
