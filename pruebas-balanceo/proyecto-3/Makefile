@@ -1,10 +1,10 @@
 all: Servidor Cliente
 
 Servidor: SocketDatagrama.o PaqueteDatagrama.o Respuesta.o mainServer.cpp Registro.h
-		g++ -std=c++11 mainServer.cpp SocketDatagrama.o PaqueteDatagrama.o Respuesta.o -o mainServer
+		g++ -std=c++11 mainServer.cpp SocketDatagrama.o PaqueteDatagrama.o Respuesta.o -o Cliente
 
 Cliente: SocketDatagrama.o PaqueteDatagrama.o Respuesta.o Solicitud.o mainClient.cpp Registro.h
-		g++ -DMG_ENABLE_HTTP_STREAMING_MULTIPART -std=c++11 mainClient.cpp mongoose.c SocketDatagrama.o PaqueteDatagrama.o Solicitud.o Respuesta.o -w -o mainClient -lpthread
+		g++ -DMG_ENABLE_HTTP_STREAMING_MULTIPART -std=c++11 mainClient.cpp mongoose.c SocketDatagrama.o PaqueteDatagrama.o Solicitud.o Respuesta.o -w -o Servidor -lpthread
 
 SocketDatagrama.o: SocketDatagrama.cpp SocketDatagrama.h
 		g++ SocketDatagrama.cpp -c
@@ -21,3 +21,5 @@ clean:
 	rm -rf *.o 
 	rm -rf mainClient
 	rm -rf mainServer
+	rm -rf Cliente
+	rm -rf Servidor

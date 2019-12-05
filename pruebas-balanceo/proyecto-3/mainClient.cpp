@@ -35,66 +35,6 @@ struct file_writer_data {
   size_t bytes_written;
 };
 
-static void handle_upload(struct mg_connection *nc, int ev, void *p) {
-  struct file_writer_data *data = (struct file_writer_data *) nc->user_data;
-  struct mg_http_multipart_part *mp = (struct mg_http_multipart_part *) p;
-
-  switch (ev) {
-    case MG_EV_HTTP_PART_BEGIN: {
-      if (data == NULL) {
-        data = (struct file_writer_data *)calloc(1, sizeof(struct file_writer_data));
-        data->fp = fopen("file.txt","wb");
-        data->bytes_written = 0;
-
-        if (data->fp == NULL) {
-          mg_printf(nc, "%s",
-                    "HTTP/1.1 500 Failed to open a file\r\n"
-                    "Content-Length: 0\r\n\r\n");
-          nc->flags |= MG_F_SEND_AND_CLOSE;
-          free(data);
-          return;
-        }
-        nc->user_data = (void *) data;
-        cout << "Iniciando carga..." << endl;
-      }
-      break;
-    }
-    case MG_EV_HTTP_PART_DATA: {
-    	//FILE * fp = fopen("file.txt","wb");
-      	if (fwrite(mp->data.p, 1, mp->data.len, data->fp) != mp->data.len) {
-       	 	mg_printf(nc, "%s",
-                  "HTTP/1.1 500 Failed to write to a file\r\n"
-                  "Content-Length: 0\r\n\r\n");
-        	nc->flags |= MG_F_SEND_AND_CLOSE;
-        	return;
-      	}
-      	data->bytes_written += mp->data.len;
-        cout << "Subiendo archivo..." << endl;
-      break;
-    }
-    case MG_EV_HTTP_PART_END: {
-      mg_printf(nc,
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/plain\r\n"
-                "Connection: close\r\n\r\n"
-                "Written %ld of POST data to a temp file\n\n",
-                (long) ftell(data->fp));
-      nc->flags |= MG_F_SEND_AND_CLOSE;
-      fclose(data->fp);
-      free(data);
-      nc->user_data = NULL;
-      cout << "Archivo recibido. Escrito en file.txt" << endl;
-      break;
-    }
-  }
-}
-
-static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
-  if (ev == MG_EV_HTTP_REQUEST) {
-    mg_serve_http(nc, (struct http_message *)ev_data, s_http_server_opts);
-  }
-}
-
 
 
 
@@ -210,7 +150,7 @@ void hilo3(string cad){
 	Solicitud a;
 	//struct mensaje * m =(struct mensaje *)a.doOperation("10.100.67.218", 7200, i, (char *)texto);
 	//memcpy(&malas,m->arguments,sizeof(int));
-	memcpy(&malas,a.doOperation("127.0.0.1",7200,3,(char*)&texto,1),sizeof(int));
+	memcpy(&malas,a.doOperation("192.168.43.30",7200,3,(char*)&texto,1),sizeof(int));
 	
 	check_malas[2] = malas;
 	//cout << "regresa 3 " << check_malas[2] << endl;
@@ -218,9 +158,153 @@ void hilo3(string cad){
 	//pthread_exit(0);
 }
 
+void hilo_m(){
+  std::ifstream ifs;
+    // std::vector<std::string> vec;
+    std::string word;
+    timeval actual{}, final{};
+    vector<string> archivo;
+    ifs.open("file.txt");
+    int cont =0;
+    while (ifs >> word) {
+        // filtrar puntuacines y numeros
+        const std::regex filter("([^A-zÁÉÍÓÚÑáéíóúñ])+");
+        //std::cout << "word antes es " << word << endl;
+        std::stringstream result;
+        std::regex_replace(std::ostream_iterator<char>(result), word.begin(), word.end(), filter, "");
+
+        word = result.str();
+
+        // Transformar tildes a normales
+        removeAccented(word);
+
+        // tranforma a minusculas
+        std::transform(word.begin(), word.end(), word.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+
+
+        //std::cout << word << std::endl;
+        archivo.push_back(word);
+        cont++;
+        //if(cont == 1000) break;
+        if(word=="theend")break;
+    }
+    cout << archivo.size() << endl;
+
+	int no_comprendidas=0;
+	vector<string> palabras;
+	vector<thread> hilos;
+	int indice = 0;
+	//string words[] = {"hola", "casa","nada","perro","hola"};
+	for(string s : archivo){
+		palabras.push_back(s);
+		// if(indice == 0)
+		// 	hilos.push_back(thread(hilo1, palabras[0]));
+		// else if(indice == 1)
+		// 	hilos.push_back(thread(hilo2, palabras[1]));
+		// else
+		// 	hilos.push_back(thread(hilo3, palabras[2]));
+		if(palabras.size() == 3){
+			//correr los tres hilos      
+			hilos.push_back(thread(hilo1, palabras[0]));
+			hilos.push_back(thread(hilo2, palabras[1]));
+			hilos.push_back(thread(hilo3, palabras[2]));
+			for(int i =0; i < 3; i++){
+				hilos[i].join();
+			}
+			vector<string> pendientes;
+			for(int i =0; i < 3;i++){
+				//cout << "check_malas para " << i+1 << " es de  " << check_malas[i] << endl;
+				if(check_malas[i] != -1){
+					no_comprendidas += (check_malas[i] == 0) ? 1 : 0;
+				}
+				else
+					pendientes.push_back(palabras[i]);
+			}
+			palabras.clear();
+			for(string xx: pendientes){
+				palabras.push_back(xx);
+			}
+			hilos.clear();
+		}
+		indice++;
+		indice%=3;
+	}
+	if(palabras.size() > 0){
+		cout << "Comprension: " << palabras.size() << endl;
+	}
+
+}
+
+static void handle_upload(struct mg_connection *nc, int ev, void *p) {
+  struct file_writer_data *data = (struct file_writer_data *) nc->user_data;
+  struct mg_http_multipart_part *mp = (struct mg_http_multipart_part *) p;
+
+  switch (ev) {
+    case MG_EV_HTTP_PART_BEGIN: {
+      if (data == NULL) {
+        data = (struct file_writer_data *)calloc(1, sizeof(struct file_writer_data));
+        data->fp = fopen("file.txt","wb");
+        data->bytes_written = 0;
+
+        if (data->fp == NULL) {
+          mg_printf(nc, "%s",
+                    "HTTP/1.1 500 Failed to open a file\r\n"
+                    "Content-Length: 0\r\n\r\n");
+          nc->flags |= MG_F_SEND_AND_CLOSE;
+          free(data);
+          return;
+        }
+        nc->user_data = (void *) data;
+        cout << "Iniciando carga..." << endl;
+      }
+      break;
+    }
+    case MG_EV_HTTP_PART_DATA: {
+    	//FILE * fp = fopen("file.txt","wb");
+      	if (fwrite(mp->data.p, 1, mp->data.len, data->fp) != mp->data.len) {
+       	 	mg_printf(nc, "%s",
+                  "HTTP/1.1 500 Failed to write to a file\r\n"
+                  "Content-Length: 0\r\n\r\n");
+        	nc->flags |= MG_F_SEND_AND_CLOSE;
+        	return;
+      	}
+      	data->bytes_written += mp->data.len;
+        cout << "Subiendo archivo..." << endl;
+      break;
+    }
+    case MG_EV_HTTP_PART_END: {
+      mg_printf(nc,
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/plain\r\n"
+                "Connection: close\r\n\r\n"
+                "Written %ld of POST data to a temp file\n\n",
+                (long) ftell(data->fp));
+      nc->flags |= MG_F_SEND_AND_CLOSE;
+      fclose(data->fp);
+      free(data);
+      nc->user_data = NULL;
+      cout << "Archivo recibido. Escrito en file.txt" << endl;
+      hilo_m();
+      break;
+      //std::thread t1{std::bind(hilo_m)};
+      
+    }
+  }
+
+  
+}
+
+static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
+  if (ev == MG_EV_HTTP_REQUEST) {
+    mg_serve_http(nc, (struct http_message *)ev_data, s_http_server_opts);
+  }
+}
+
+
 
 int main(int argc, char *argv[]){
-/*
+
   struct mg_mgr mgr;
   struct mg_connection *c;
 
@@ -242,7 +326,10 @@ int main(int argc, char *argv[]){
     mg_mgr_poll(&mgr, 1000);
   }
   mg_mgr_free(&mgr);
-*/
+
+
+
+/*
 	std::ifstream ifs;
     // std::vector<std::string> vec;
     std::string word;
@@ -270,7 +357,8 @@ int main(int argc, char *argv[]){
         //std::cout << word << std::endl;
         archivo.push_back(word);
         cont++;
-        if(cont == 1000) break;
+        //if(cont == 1000) break;
+        if(word=="theend")break;
     }
     cout << archivo.size() << endl;
 
@@ -288,7 +376,7 @@ int main(int argc, char *argv[]){
 		// else
 		// 	hilos.push_back(thread(hilo3, palabras[2]));
 		if(palabras.size() == 3){
-			//correr los tres hilos
+			//correr los tres hilos      
 			hilos.push_back(thread(hilo1, palabras[0]));
 			hilos.push_back(thread(hilo2, palabras[1]));
 			hilos.push_back(thread(hilo3, palabras[2]));
@@ -316,7 +404,7 @@ int main(int argc, char *argv[]){
 	if(palabras.size() > 0){
 		cout << "quedaron " << palabras.size() << endl;
 	}
-
+*/
     return 0;
 }
 
